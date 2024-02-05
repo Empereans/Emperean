@@ -498,11 +498,6 @@ local function InputBegan(InputObject)
 	end
 end
 
-local function Enabled(Instance)
-	Enableds[Instance] = Instance.Enabled
-	Instance.Enabled = false
-end
-
 local function gameDescendantAdded(Instance)
 	if ( OptionsDisableGUIs and IsA(Instance, "ScreenGui") ) or ( OptionsDisableScripts and Instance ~= script and ( IsA(Instance, "LocalScript") or IsA(Instance, "Script") ) ) then
 		Enableds[Instance] = Instance.Enabled
