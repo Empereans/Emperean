@@ -1,15 +1,18 @@
 --[[
-	/ Emperean Reanimate V2.1
+	/ Emperean Reanimate V2.2
 	/ made by: emperss#0
 	/ join: discord.gg/5PMtk6PJf5
+	/ for changelogs and my amazing community! follow the rules tho.
 	/ dont steal or change credits
-	"200 variables limit when? never cuz ur supposed to use it in a loadstring"
+	*fun fact: the original version failed and had to be rewritten into this!*
+	"im gonna love seeing people use this for animation players"
 ]]
 
 local Options = nil
 local OptionsAccessories = nil
 local OptionsDebug = nil
 local OptionsDebugTransparency = nil
+local OptionsDebugTeleportRandom = nil
 local OptionsFling = nil
 local OptionsDisableScripts = nil
 local OptionsDisableGUIs = nil
@@ -63,6 +66,10 @@ local GetPropertyChangedSignal = game.GetPropertyChangedSignal
 local GetChildren = game.GetChildren
 local GetDescendants = game.GetDescendants
 local IsA = game.IsA
+local Players = FindFirstChildOfClass(game, "Players")
+local CreateHumanoidModelFromUserId = Players.CreateHumanoidModelFromUserId
+local LocalPlayer = Players.LocalPlayer
+local Mouse = LocalPlayer:GetMouse()
 local RunService = FindFirstChildOfClass(game, "RunService")
 local PostSimulation = RunService.PostSimulation
 local PreRender = RunService.PreRender
@@ -77,9 +84,15 @@ local Workspace = FindFirstChildOfClass(game, "Workspace")
 local CurrentCamera = Workspace.CurrentCamera
 
 local Instancenew = Instance.new
-
-local LocalPlayer = FindFirstChildOfClass(game, "Players").LocalPlayer
-local Mouse = LocalPlayer:GetMouse()
+local Humanoid = Instancenew("Humanoid")
+local ApplyDescription = Humanoid.ApplyDescription
+local ChangeState = Humanoid.ChangeState
+local GetAppliedDescription = Humanoid.GetAppliedDescription
+local Move = Humanoid.Move
+Destroy(Humanoid)
+local Part = Instancenew("Part")
+local GetJoints = Part.GetJoints
+Destroy(Part)
 
 local math = math
 local mathrandom = math.random
@@ -186,102 +199,6 @@ local function Invisible(Instance)
 	end
 end
 
-local Model = Instancenew("Model")
-
-local function Part(Name, Size)
-	local Part = Instancenew("Part")
-	Part.Name = Name
-	Part.Size = Size
-	Part.Parent = Model
-
-	return Part
-end
-
-local function Motor6D(Name, C0, C1, Part0, Part1)
-	local Motor6D = Instancenew("Motor6D")
-	Motor6D.Name = Name
-	Motor6D.C0 = C0
-	Motor6D.C1 = C1
-	Motor6D.Part0 = Part0
-	Motor6D.Part1 = Part1
-	Motor6D.Parent = Part0
-
-	return Motor6D
-end
-
-local function Attachment(Name, CFrame, Parent)
-	local Attachment = Instancenew("Attachment")
-	Attachment.Name = Name
-	Attachment.CFrame = CFrame
-	Attachment.Parent = Parent
-
-	return Attachment
-end
-
-local Head = Part("Head", Vector3new(2, 1, 1))
-local GetJoints = Head.GetJoints
-local Torso = Part("Torso", TorsoSize)
-local LeftArm = Part("Left Arm", LimbSize)
-local RightArm = Part("Right Arm", LimbSize)
-local LeftLeg = Part("Left Leg", LimbSize)
-local RightLeg = Part("Right Leg", LimbSize)
-local HumanoidRootPart = Part("HumanoidRootPart", TorsoSize)
-
-Motor6D("Right Shoulder", CFramenew(1, 0.5, 0, 0, 0, 1, 0, 1, 0, -1, -0, -0), CFramenew(-0.5, 0.5, 0, 0, 0, 1, 0, 1, 0, -1, -0, -0), Torso, RightArm)
-Motor6D("Left Shoulder", CFramenew(-1, 0.5, 0, -0, -0, -1, 0, 1, 0, 1, 0, 0), CFramenew(0.5, 0.5, 0, -0, -0, -1, 0, 1, 0, 1, 0, 0), Torso, LeftArm)
-Motor6D("Right Hip", CFramenew(1, -1, 0, 0, 0, 1, 0, 1, 0, -1, -0, -0), CFramenew(0.5, 1, 0, 0, 0, 1, 0, 1, 0, -1, -0, -0), Torso, RightLeg)
-Motor6D("Left Hip", CFramenew(-1, -1, 0, -0, -0, -1, 0, 1, 0, 1, 0, 0), CFramenew(-0.5, 1, 0, -0, -0, -1, 0, 1, 0, 1, 0, 0), Torso, LeftLeg)
-Motor6D("Neck", CFramenew(0, 1, 0, -1, -0, -0, 0, 0, 1, 0, 1, 0), CFramenew(0, -0.5, 0, -1, -0, -0, 0, 0, 1, 0, 1, 0), Torso, Head)
-Motor6D("RootJoint", CFramenew(0, 0, 0, -1, -0, -0, 0, 0, 1, 0, 1, 0), CFramenew(0, 0, 0, -1, -0, -0, 0, 0, 1, 0, 1, 0), HumanoidRootPart, Torso)
-
-Attachment("HairAttachment", CFramenew(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1), Head)
-Attachment("HatAttachment", CFramenew(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1), Head)
-Attachment("FaceFrontAttachment", CFramenew(0, 0, -0.600000024, 1, 0, 0, 0, 1, 0, 0, 0, 1), Head)
-Attachment("FaceCenterAttachment", CFramenew(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1), Head)
-Attachment("NeckAttachment", CFramenew(0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1), Torso)
-Attachment("BodyFrontAttachment", CFramenew(0, 0, -0.5, 1, 0, 0, 0, 1, 0, 0, 0, 1), Torso)
-Attachment("BodyBackAttachment", CFramenew(0, 0, 0.5, 1, 0, 0, 0, 1, 0, 0, 0, 1), Torso)
-Attachment("LeftCollarAttachment", CFramenew(-1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1), Torso)
-Attachment("RightCollarAttachment", CFramenew(1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1), Torso)
-Attachment("WaistFrontAttachment", CFramenew(0, -1, -0.5, 1, 0, 0, 0, 1, 0, 0, 0, 1), Torso)
-Attachment("WaistCenterAttachment", CFramenew(0, -1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1), Torso)
-Attachment("WaistBackAttachment", CFramenew(0, -1, 0.5, 1, 0, 0, 0, 1, 0, 0, 0, 1), Torso)
-Attachment("LeftShoulderAttachment", CFramenew(0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1), LeftArm)
-Attachment("LeftGripAttachment", CFramenew(0, -1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1), LeftArm)
-Attachment("RightShoulderAttachment", CFramenew(0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1), RightArm)
-Attachment("RightGripAttachment", CFramenew(0, -1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1), RightArm)
-Attachment("LeftFootAttachment", CFramenew(0, -1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1), LeftLeg)
-Attachment("RightFootAttachment", CFramenew(0, -1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1), RightLeg)
-Attachment("RootAttachment", CFramenew(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1), HumanoidRootPart)
-
-Instancenew("BodyColors", Model)
-local Humanoid = Instancenew("Humanoid", Model)
-local ChangeState = Humanoid.ChangeState
-local Move = Humanoid.Move
-Instancenew("Animator", Humanoid)
-
-local face = Instancenew("Decal")
-face.Name = "face"
-face.Texture = "rbxasset://textures/face.png"
-face.Parent = Head
-
-local SpecialMesh = Instancenew("SpecialMesh")
-SpecialMesh.Name = "Mesh"
-SpecialMesh.MeshType = Enum.MeshType.Head
-SpecialMesh.Scale = Vector3new(1.25, 1.25, 1.25)
-SpecialMesh.Parent = Head
-
-Instancenew("Shirt", Model)
-Instancenew("Pants", Model)
-Instancenew("ShirtGraphic", Model)
-
-local Animate = Instancenew("LocalScript")
-Animate.Name = "Animate"
-Animate.Enabled = true
-Animate.Parent = Model
-
-Model.Name = LocalPlayer.Name
-
 local function DescendantAdded(Instance)
 	if IsA(Instance, "Attachment") then
 		local Handle = Instance.Parent
@@ -308,11 +225,21 @@ local function DescendantAdded(Instance)
 				for Index, Table in pairs(OptionsAccessories) do
 					if stringfind(MeshId, Table.MeshId) and stringfind(TextureId, Table.TextureId) then
 						local Instance = FindFirstChildOfClassAndName(Rig, "BasePart", Table.Name)
-
+						
+						local AlternativeName = Table.AlternativeName
+						local AlternativeInstance = false
+						
+						if not Instance and AlternativeName then
+							Instance = FindFirstChildOfClassAndName(Rig, "BasePart", AlternativeName)
+							AlternativeInstance = true
+						end
+						
 						if Instance and not tablefind(Blacklist, Instance) then
-							tableinsert(Blacklist, Instance)
+							if Table.Blacklist then
+								tableinsert(Blacklist, Instance)
+							end
 							BreakJoints(Handle)
-							tableinsert(Tables, { Part0 = Handle, Part1 = Instance, CFrame = Table.CoordinateFrame, LastPosition = Instance.Position })
+							tableinsert(Tables, { Part0 = Handle, Part1 = Instance, CFrame = AlternativeInstance and Table.AllowAlternativeCFrame and Table.AlternativeCFrame or Table.CoordinateFrame, LastPosition = Instance.Position })
 							return
 						end
 					end
@@ -356,12 +283,11 @@ local function DescendantAdded(Instance)
 	elseif IsA(Instance, "BasePart") then
 		Instance.CanQuery = false
 		tableinsert(BaseParts, Instance)
-		taskdelay(1, BreakJoints, Instance)
 	end
 end
 
-local function ApplyDescription()
-	local Description = Humanoid:GetAppliedDescription()
+local function ApplyDescriptionRig()
+	local Description = GetAppliedDescription(Humanoid)
 	Description.HatAccessory = ""
 	Description.BackAccessory = ""
 	Description.FaceAccessory = ""
@@ -370,7 +296,11 @@ local function ApplyDescription()
 	Description.FrontAccessory = ""
 	Description.WaistAccessory = ""
 	Description.ShouldersAccessory = ""
-	RigHumanoid:ApplyDescription(Description)
+	ApplyDescription(RigHumanoid, Description)
+	
+	for Index, Instance in pairs(GetDescendants(Rig)) do
+		Invisible(Instance)
+	end
 end
 
 local function CharacterAdded()
@@ -403,7 +333,7 @@ local function CharacterAdded()
 			end
 
 			if RigHumanoid and Humanoid then
-				pcall(ApplyDescription)
+				pcall(ApplyDescriptionRig)
 			end
 		end
 
@@ -440,7 +370,6 @@ local function CharacterAdded()
 					HumanoidRootPart.AssemblyLinearVelocity = Vector314
 
 					HumanoidRootPart.CFrame = Target.CFrame * CFramenew(0, 0, 4 * mathsin(Time * 30)) * CFrameAngles(mathrandom(- 360, 360), mathrandom(- 360, 360), mathrandom(- 360, 360)) + ( LinearVelocity * 0.5) 
-
 					taskwait()
 				end
 
@@ -461,11 +390,11 @@ local function CharacterAdded()
 				HumanoidRootPart.AssemblyAngularVelocity = Vector3zero
 				HumanoidRootPart.AssemblyLinearVelocity = Vector3zero
 
-				HumanoidRootPart.CFrame = RigHumanoidRootPart.CFrame + Vector3new(mathrandom(- 16, 16), 0, mathrandom(- 16, 16))
+				HumanoidRootPart.CFrame = RigHumanoidRootPart.CFrame + ( OptionsDebugTeleportRandom and Vector3new(mathrandom(- 16, 16), 0, mathrandom(- 16, 16)) or Vector3zero )
 			end
 		end
 
-		taskwait(0.26)
+		taskwait(0.26 + Wait(PreSimulation))
 
 		if Character then
 			BreakJoints(Character)
@@ -481,7 +410,7 @@ local function PostSimulationConnect()
 	LastTime = Time
 
 	local Integer = 29 + mathsin(Time)
-	local Vector3 = Vector3new(0, 0, 0.001 * mathsin(Time * 20))
+	local Vector3 = Vector3new(0, 0, 0.002 * mathsin(Time * 25))
 
 	for Index, Table in pairs(Tables) do
 		local Part0 = Table.Part0
@@ -527,7 +456,7 @@ local function Fling(Target)
 			Target = FindFirstAncestorOfClass(Target, "Model")
 		end
 		if IsA(Target, "Model") then
-			Target = FindFirstAncestorOfClass(Target, "BasePart", "HumanoidRootPart")
+			Target = FindFirstChildOfClassAndName(Target, "BasePart", "HumanoidRootPart")
 		end
 		if IsA(Target, "BasePart") then
 			for Index, Table in pairs(Targets) do
@@ -535,12 +464,12 @@ local function Fling(Target)
 					return
 				end
 			end
-			
+
 			local Parent = Target.Parent
 			local Highlight = Instancenew("Highlight")
 			Highlight.Adornee = Parent
 			Highlight.Parent = Parent
-			
+
 			tableinsert(Highlights, Highlight)
 			tableinsert(Targets, {Highlight = Highlight, Target = Target})
 		end
@@ -567,6 +496,11 @@ local function InputBegan(InputObject)
 			end
 		end
 	end
+end
+
+local function Enabled(Instance)
+	Enableds[Instance] = Instance.Enabled
+	Instance.Enabled = false
 end
 
 local function gameDescendantAdded(Instance)
@@ -615,6 +549,7 @@ local Emperean = {
 		OptionsAccessories = Table.Accessories or { }
 		OptionsDebug = Options.Debug or { }
 		OptionsDebugTransparency = OptionsDebug.Transparency or 1
+		OptionsDebugTeleportRandom = OptionsDebug.TeleportRandom
 		OptionsFling = Options.Fling or false
 		OptionsDisableScripts = Options.DisableScripts or false
 		OptionsDisableGUIs = Options.DisableGUIs or false
@@ -630,7 +565,8 @@ local Emperean = {
 		Boolean = true
 		LastTime = osclock()
 
-		Rig = Clone(Model)
+		Rig = Options.R15 and CreateHumanoidModelFromUserId(Players, 5532894300) or CreateHumanoidModelFromUserId(Players, 5532891747)
+		Rig.Name = LocalPlayer.Name
 		RigHumanoid = Rig.Humanoid
 		RigHumanoidRootPart = Rig.HumanoidRootPart
 		Rig.Parent = Workspace
@@ -650,7 +586,7 @@ local Emperean = {
 
 		CharacterAdded()
 		tableinsert(RBXScriptConnections, Connect(GetPropertyChangedSignal(LocalPlayer, "Character"), CharacterAdded))
-		
+
 		if OptionsFling then
 			tableinsert(RBXScriptConnections, Connect(UserInputService.InputBegan, InputBegan))
 		end
@@ -676,8 +612,8 @@ Emperean.Start({
 		--[[
 		https://www.roblox.com/catalog/14532301415/1x1x1x1-s-Torso
 		]]
-		{ Name = "Torso", MeshId = "14413791480", TextureId = "14413794823", CoordinateFrame = CFrameidentity },
-
+		{ Blacklist = true, Name = "Torso", AlternativeName = "UpperTorso", MeshId = "14413791480", TextureId = "14413794823", AllowAlternativeCFrame = false, CoordinateFrame = CFrameidentity, AlternativeCFrame = CFrameidentity },
+		
 		--[[
 		Resized Hats:
 		Wear this head for it to work: https://www.roblox.com/catalog/2493588193/Knights-of-Redcliff-Paladin-Head
@@ -687,10 +623,10 @@ Emperean.Start({
 		https://www.roblox.com/catalog/12867898930/Grey-Smiley-Rectangle-Head
 		]]
 
-		{ Name = "Right Arm", MeshId = "12867814848", TextureId = "12794084950", CoordinateFrame = CFrameAngles(0, 0, 0) },
-		{ Name = "Left Arm", MeshId = "12867814848", TextureId = "12867874342", CoordinateFrame = CFrameAngles(0, - 1.57, 0) },
-		{ Name = "Right Leg", MeshId = "12867814848", TextureId = "12867873138", CoordinateFrame = CFrameAngles(0, 1.57, 0) },
-		{ Name = "Left Leg", MeshId = "12867814848", TextureId = "12794082919", CoordinateFrame = CFrameAngles(0, 0, 0) },
+		{ Blacklist = true, Name = "Right Arm", AlternativeName = "RightLowerArm", MeshId = "12867814848", TextureId = "12794084950", AllowAlternativeCFrame = false, CoordinateFrame = CFrameAngles(0, 0, 0), AlternativeCFrame = CFrameidentity },
+		{ Blacklist = true, Name = "Left Arm", AlternativeName = "LeftLowerArm", MeshId = "12867814848", TextureId = "12867874342", AllowAlternativeCFrame = false, CoordinateFrame = CFrameAngles(0, - 1.57, 0), AlternativeCFrame = CFrameidentity },
+		{ Blacklist = true, Name = "Right Leg", AlternativeName = "RightLowerLeg", MeshId = "12867814848", TextureId = "12867873138", AllowAlternativeCFrame = false, CoordinateFrame = CFrameAngles(0, 1.57, 0), AlternativeCFrame = CFrameidentity },
+		{ Blacklist = true, Name = "Left Leg", AlternativeName = "LeftLowerLeg", MeshId = "12867814848", TextureId = "12794082919", AllowAlternativeCFrame = false, CoordinateFrame = CFrameAngles(0, 0, 0), AlternativeCFrame = CFrameidentity },
 
 		--[[
 		Alternative limbs:
@@ -701,10 +637,10 @@ Emperean.Start({
 		https://www.roblox.com/catalog/11263254795/Dummy-Head-For-Headless
 		]]
 
-		{ Name = "Right Arm", MeshId = "12344206657", TextureId = "12344206675", CoordinateFrame = CFrameAngles(- 2, 0, 0) },
-		{ Name = "Left Arm", MeshId = "12344207333", TextureId = "12344207341", CoordinateFrame = CFrameAngles(- 2, 0, 0) },
-		{ Name = "Right Leg", MeshId = "11263221350", TextureId = "11263219250", CoordinateFrame = CFrameAngles(1.57, - 1.57, 0) },
-		{ Name = "Left Leg", MeshId = "11159370334", TextureId = "11159284657", CoordinateFrame = CFrameAngles(1.57, 1.57, 0) },
+		{ Blacklist = true, Name = "Right Arm", AlternativeName = "RightLowerArm", MeshId = "12344206657", TextureId = "12344206675", AllowAlternativeCFrame = false, CoordinateFrame = CFrameAngles(- 2, 0, 0), AlternativeCFrame = CFrameidentity },
+		{ Blacklist = true, Name = "Left Arm", AlternativeName = "LeftLowerArm", MeshId = "12344207333", TextureId = "12344207341", AllowAlternativeCFrame = false, CoordinateFrame = CFrameAngles(- 2, 0, 0), AlternativeCFrame = CFrameidentity },
+		{ Blacklist = true, Name = "Right Leg", AlternativeName = "RightLowerLeg", MeshId = "11263221350", TextureId = "11263219250", AllowAlternativeCFrame = false, CoordinateFrame = CFrameAngles(1.57, - 1.57, 0), AlternativeCFrame = CFrameidentity },
+		{ Blacklist = true, Name = "Left Leg", AlternativeName = "LeftLowerLeg", MeshId = "11159370334", TextureId = "11159284657", AllowAlternativeCFrame = false, CoordinateFrame = CFrameAngles(1.57, 1.57, 0), AlternativeCFrame = CFrameidentity },
 
 		--[[
 		Free Rig:
@@ -715,16 +651,18 @@ Emperean.Start({
 		https://www.roblox.com/catalog/4489239608/International-Fedora-United-Kingdom
 		]]
 
-		{ Name = "Torso", MeshId = "4819720316", TextureId = "4819722776", CoordinateFrame = CFrameidentity },
-		{ Name = "Right Arm", MeshId = "4324138105", TextureId = "4391374782", CoordinateFrame = CFrameAngles(1.57, 1.57, 0) },
-		{ Name = "Left Arm", MeshId = "4154474745", TextureId = "4154474807", CoordinateFrame = CFrameAngles(1.57, 1.57, 0) },
-		{ Name = "Right Leg", MeshId = "4094864753", TextureId = "4094881938", CoordinateFrame = CFrameAngles(1.57, 1.57, 0) },
-		{ Name = "Left Leg", MeshId = "4489232754", TextureId = "4489233876", CoordinateFrame = CFrameAngles(1.57, 1.57, 0) },
+		{ Blacklist = true, Name = "Torso", AlternativeName = "UpperTorso", MeshId = "4819720316", TextureId = "4819722776", AllowAlternativeCFrame = false, CoordinateFrame = CFrameidentity, AlternativeCFrame = CFrameidentity },
+		{ Blacklist = true, Name = "Right Arm", AlternativeName = "RightLowerArm", MeshId = "4324138105", TextureId = "4391374782", AllowAlternativeCFrame = false, CoordinateFrame = CFrameAngles(1.57, 1.57, 0), AlternativeCFrame = CFrameidentity },
+		{ Blacklist = true, Name = "Left Arm", AlternativeName = "LeftLowerArm", MeshId = "4154474745", TextureId = "4154474807", AllowAlternativeCFrame = false, CoordinateFrame = CFrameAngles(1.57, 1.57, 0), AlternativeCFrame = CFrameidentity },
+		{ Blacklist = true, Name = "Right Leg", AlternativeName = "RightLowerLeg", MeshId = "4094864753", TextureId = "4094881938", AllowAlternativeCFrame = false, CoordinateFrame = CFrameAngles(1.57, 1.57, 0), AlternativeCFrame = CFrameidentity },
+		{ Blacklist = true, Name = "Left Leg", AlternativeName = "LeftLowerLeg", MeshId = "4489232754", TextureId = "4489233876", AllowAlternativeCFrame = false, CoordinateFrame = CFrameAngles(1.57, 1.57, 0), AlternativeCFrame = CFrameidentity },
 	},
 	Debug = {
-		Transparency = 1
+		Transparency = 1,
+		TeleportRandom = false
 	},
+	R15 = false,
 	Fling = true,
 	DisableScripts = false,
 	DisableGUIs = true,
-})
+})	
